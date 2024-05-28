@@ -28,11 +28,8 @@ function decycle(obj, stack = []) {
 const redis = require("redis");
 
 // CORS
-const options = {
-  origin: "http://localhost:3000",
-};
 const cors = require("cors");
-app.use(cors(options));
+app.use(cors());
 
 // Create Redis Client
 const redisClient = redis.createClient({
@@ -49,48 +46,32 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/shoes", async (req, res) => {
-  const query = req.query;
-  if (query.owner) {
-    const owner = query.owner;
-    try {
-      const shoe = await redisClient.lRange(owner, 0, -1);
-      if (shoe.length === 0) {
-        const owners = await redisClient.keys("*");
-        if (owners.includes(owner)) {
-          return res.send([{ owner: owner, shoes: [] }]);
-        }
-        throw new Error("Owner not found");
-      }
-      const listshoe = shoe.map((shoe) => JSON.parse(shoe));
-      const ownerShoes = { owner: owner, shoes: listshoe };
-      return res.send(ownerShoes);
-    } catch (error) {
-      return res.status(404).send(error.message);
-    }
+  if (req.body.color) {
+    const shoesGet = await redisClient.json.get(
+      "shoe:",
+      "color",
+      req.body.color
+    );
+    return res.send(shoesGet);
+  } else {
+    const shoesGet = await redisClient.json.get("shoe:");
+    return res.send(shoesGet);
   }
-  const owners = await redisClient.keys("*");
-  const shoes = [];
-  for (const owner of owners) {
-    const shoe = await redisClient.lRange(owner, 0, -1);
-    const listshoe = shoe.map((shoe) => JSON.parse(shoe));
-    const ownerShoes = { owner: owner, shoes: listshoe };
-    shoes.push(ownerShoes);
-  }
-  res.send(shoes);
 });
 
-app.post("/dev-shoes", async (req, res) => {
-  const owners = ["John", "Jane", "Doe"];
-  const colors = ["red", "blue", "green"];
-  const brands = ["nike", "adidas", "reebok"];
+app.post("/shoes", async (req, res) => {
   const shoe = {
-    id: Math.floor(Math.random() * 1000),
-    brand: brands[Math.floor(Math.random() * brands.length)],
-    color: colors[Math.floor(Math.random() * colors.length)],
+    id: 1,
+    name: "Nike Air Max 90",
+    color: "White",
+    price: 100,
   };
-  const owner = owners[Math.floor(Math.random() * owners.length)];
-  await redisClient.rPush(owner, JSON.stringify(shoe));
-  return res.json("Shoe added to Redis");
+  await redisClient.json.set("shoe:", "$", shoe, (err, reply) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  return res.send("Shoe added");
 });
 
 app.post("/shoes", async (req, res) => {
