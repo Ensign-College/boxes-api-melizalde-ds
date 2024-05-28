@@ -93,6 +93,7 @@ app.post("/dev-shoes", async (req, res) => {
   return res.json("Shoe added to Redis");
 });
 
+// Added a new endpoint to add a shoe to a specific owner
 app.post("/shoes", async (req, res) => {
   const query = req.query;
   if (query.owner) {
