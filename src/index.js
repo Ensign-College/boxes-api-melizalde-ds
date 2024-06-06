@@ -7,9 +7,8 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-// File System
+// File System and Decycle Function
 const fs = require("fs");
-// Decycle function
 function decycle(obj, stack = []) {
   if (!obj || typeof obj !== "object") return obj;
 
@@ -38,6 +37,9 @@ app.use(cors(options));
 // Axios
 const axios = require("axios");
 const e = require("express");
+
+// Apollo Server
+const { ApolloServer } = require("apollo-server-express");
 
 // Create Redis Client
 const redisClient = redis.createClient({
@@ -124,7 +126,22 @@ app.post("/shoes", async (req, res) => {
       const id = Math.floor(Math.random() * 100000);
       await redisClient.hSet(
         `shoe:${id}`,
-        ["owner", owner, "color", color, "brand", brand],
+        [
+          "owner",
+          owner,
+          "color",
+          color,
+          "brand",
+          brand,
+          "material",
+          material,
+          "type",
+          type,
+          "size",
+          size,
+          "price",
+          price,
+        ],
         (err) => {
           if (err) {
             return res.status(400).send(err.message);
@@ -165,6 +182,9 @@ app.get("/shoes/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const shoe = await redisClient.hGetAll(`shoe:${id}`);
+    if (shoe.owner === undefined) {
+      return res.status(404).send("Shoe not found");
+    }
     const shoeJson = {
       id: id,
       owner: shoe.owner,
@@ -192,7 +212,6 @@ app.delete("/shoes/:id", async (req, res) => {
         "idx:shoe",
         `@owner:${owner}`
       );
-      console.log(otherKeys);
       if (otherKeys.total === 0) {
         await redisClient.SREM("owners", owner);
       }
@@ -390,18 +409,7 @@ app.post("/dev-shoes", async (req, res) => {
 });
 
 app.post("/dev-shoes-redis", async (req, res) => {
-  const shoes = {
-    Brand: "Nike",
-    Material: "Woven/Fabric Materials",
-    Type: "Casual",
-    Size: 10,
-  };
-  try {
-    console.log(price.data);
-    return res.status(200).send(price.data);
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
+  return res.status(200).send("This is a test endpoint");
 });
 
 app.delete("/dev-shoes", async (req, res) => {
