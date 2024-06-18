@@ -22,44 +22,35 @@ const options = {
 const cors = require("cors");
 app.use(cors(options));
 
+// Custom Error Handler
+const errorHandler = require("./middleware/error_handler");
+app.use(errorHandler);
+// Custom Error Handler
+const errorHandler = require("./middleware/error_handler");
+app.use(errorHandler);
+
+// Auth Middleware
+const auth = require("./middleware/auth");
+app.use("/cars", auth);
+
+// Car Routes
+const carRoutes = require("./routes/car_routes");
+app.use("/cars", carRoutes);
+
 // User Routes
 const userRoutes = require("./routes/user_routes");
-app.use(userRoutes);
-
-// File System
-const fs = require("fs");
-// Decycle function
-function decycle(obj, stack = []) {
-  if (!obj || typeof obj !== "object") return obj;
-
-  if (stack.includes(obj)) return null;
-
-  let s = stack.concat([obj]);
-
-  return Array.isArray(obj)
-    ? obj.map((x) => decycle(x, s))
-    : Object.fromEntries(
-        Object.entries(obj).map(([k, v]) => [k, decycle(v, s)])
-      );
-}
+app.use("/users", userRoutes);
 
 // MongoDB
 const mongoose = require("mongoose");
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI);
 
-// PostgreSQL
-
 // Redis
 const redis = require("redis");
 const redisClient = redis.createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
-
-// Hello World Endpoint
-app.get("/", async (req, res) => {
-  res.send("Hello World!");
-});
 
 // Define a port
 const port = process.env.PORT || 3001;

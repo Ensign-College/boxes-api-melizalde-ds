@@ -31,6 +31,8 @@ router.post(
       .withMessage("Password is too weak")
       .isLength({ min: 8 })
       .withMessage("Password must be at least 8 characters"),
+    body("name").notEmpty().withMessage("Name cannot be empty"),
+    body("lastName").notEmpty().withMessage("Last name cannot be empty"),
   ],
   userController.signup
 );

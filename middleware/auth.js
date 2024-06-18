@@ -1,7 +1,8 @@
+const JsonWebTokenError = require("jsonwebtoken").JsonWebTokenError;
 const jsonwebtoken = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -18,6 +19,10 @@ module.exports = (req, res, next) => {
     req.userId = decodedToken.userId;
     next();
   } catch (error) {
+    if (error instanceof JsonWebTokenError) {
+      error.message = "Not authenticated. Please log in.";
+      error.statusCode = 401;
+    }
     next(error);
   }
 };

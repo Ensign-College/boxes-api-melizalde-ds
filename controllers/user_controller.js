@@ -55,11 +55,17 @@ exports.signup = async (req, res, next) => {
       err.data = errors.array();
       throw err;
     }
+
+    if (!req.body) {
+      return res.status(400).json({ message: "No user data provided" });
+    }
     // Hash the password and create a new user
     const hashedPassword = bcrypt.hashSync(req.body.password, 12);
     const user = new User({
       email: req.body.email,
       password: hashedPassword,
+      name: req.body.name,
+      lastName: req.body.lastName,
     });
     await user.save();
 

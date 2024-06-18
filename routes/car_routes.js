@@ -1,21 +1,17 @@
 const express = require("express");
-const Car = require("../models/car");
-const bcrypt = require("bcryptjs");
 const { body } = require("express-validator");
-const { auth } = require("../middleware/auth");
 const router = express.Router();
 const carController = require("../controllers/car_controller");
 
 // Get cars route
-router.get("/cars", auth, carController.getCars);
+router.get("/", carController.getCars);
 
 // Get car route
-router.get("/car/:id", auth, carController.getCar);
+router.get("/:id", carController.getCar);
 
 // Create car route
 router.post(
-  "/car",
-  auth,
+  "/",
   [
     body("stockId").trim().isLength({ min: 1 }),
     body("make").trim().isLength({ min: 1 }),
@@ -29,10 +25,9 @@ router.post(
   carController.createCar
 );
 
-// Update car route
-router.put(
-  "/car/:id",
-  auth,
+// Patch car route
+router.patch(
+  "/:id",
   [
     body("stockId").trim().isLength({ min: 1 }),
     body("make").trim().isLength({ min: 1 }),
@@ -47,6 +42,6 @@ router.put(
 );
 
 // Delete car route
-router.delete("/car/:id", auth, carController.deleteCar);
+router.delete("/:id", carController.deleteCar);
 
 module.exports = router;
