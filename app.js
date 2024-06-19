@@ -25,9 +25,6 @@ app.use(cors(options));
 // Custom Error Handler
 const errorHandler = require("./middleware/error_handler");
 app.use(errorHandler);
-// Custom Error Handler
-const errorHandler = require("./middleware/error_handler");
-app.use(errorHandler);
 
 // Auth Middleware
 const auth = require("./middleware/auth");
@@ -47,10 +44,10 @@ const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI);
 
 // Redis
-const redis = require("redis");
-const redisClient = redis.createClient();
-redisClient.on("error", (err) => console.log("Redis Client Error", err));
-redisClient.connect();
+const initializeRedisClient = require("./middleware/redis");
+async () => {
+  await initializeRedisClient;
+};
 
 // Define a port
 const port = process.env.PORT || 3001;
