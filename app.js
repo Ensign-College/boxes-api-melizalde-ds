@@ -32,6 +32,7 @@ app.use("/api/gestion", gestionRoutes);
 
 // MongoDB
 const mongoose = require("mongoose");
+const uri = `mongodb://${process.env.HOST}:${process.env.PORT}/gestion`;
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI);
 
