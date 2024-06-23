@@ -26,28 +26,14 @@ app.use(cors(options));
 const errorHandler = require("./middleware/error_handler");
 app.use(errorHandler);
 
-// Auth Middleware
-const auth = require("./middleware/auth");
-app.use("/cars", auth);
-
-// Car Routes
-const carRoutes = require("./routes/car_routes");
-app.use("/cars", carRoutes);
-
-// User Routes
-const userRoutes = require("./routes/user_routes");
-app.use("/users", userRoutes);
+// Routes
+const gestionRoutes = require("./routes/gestion_routes");
+app.use("/api/gestion", gestionRoutes);
 
 // MongoDB
 const mongoose = require("mongoose");
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI);
-
-// Redis
-const initializeRedisClient = require("./middleware/redis");
-async () => {
-  await initializeRedisClient;
-};
 
 // Define a port
 const port = process.env.PORT || 3001;

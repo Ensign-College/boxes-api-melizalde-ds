@@ -1,39 +1,34 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const carSchema = new Schema({
-  stockId: {
+const gestionSchema = new Schema({
+  veliz: {
     type: String,
     required: true,
   },
-  make: {
+  adeudo: {
     type: String,
     required: true,
   },
-  model: {
+  fecha: {
+    type: Date,
+  },
+  estatus: {
     type: String,
     required: true,
   },
-  year: {
-    type: Number,
-    required: true,
-  },
-  color: {
+  codigo: {
     type: String,
     required: true,
   },
-  odometer: {
-    type: Number,
-    required: true,
-  },
-  owner: {
+  descripcion: {
     type: String,
     required: true,
   },
-  description: {
-    type: String,
+  estado: {
+    type: Array,
     required: true,
   },
 });
 
-module.exports = mongoose.model("Car", carSchema);
+module.exports = mongoose.model("Gestion", gestionSchema);
