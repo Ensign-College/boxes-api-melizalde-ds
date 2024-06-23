@@ -1,0 +1,17 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore Readme.md
+Readme.md
+
+# Ignore .gitignore file
+.gitignore
+
+# Ignore .gitattributes file
+.gitattributes
+
+# Ignore .git folder
+.git/
+
+# Ignore .vscode folder
+.vscode/
